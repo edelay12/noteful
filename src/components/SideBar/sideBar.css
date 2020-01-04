@@ -1,0 +1,50 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.folderList {
+    list-style: none;
+    width: 100%;
+    margin-top: 5px;
+
+}
+.folderList a {
+    text-decoration: none;
+    color: black;
+    width: 100%;
+    height: 100%;
+}
+.folderList li {
+
+    padding: 5px;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+ 
+}
+
+.addFolderButton {
+    margin-top: 10px;
+    padding:10px;
+    width: 70%;
+    border: 1px solid black;
+    background: none;
+}
+
+.linkContainer {
+width: 100%;
+height: 100%;
+
+}
+
+.linkName {
+
+   
+}
+
+.selectedLink {
+    background-color: blue !important;
+    color: red !important;
+    width: 100%;
+    height: 100%;
+}

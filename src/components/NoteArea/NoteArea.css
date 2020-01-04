@@ -1,0 +1,40 @@
+* {
+    padding: 0;
+    margin: 0;
+
+}
+
+.notesList {
+    width: 100%;
+    list-style: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.notesList li{
+    width: 100%;
+    border: 1px solid black;
+    padding: 5px;
+    margin: 10px;
+    position: relative;
+}
+.notesList li > h3, h6 {
+text-align: left;
+margin: 5px;
+}
+
+.deleteNoteButton {
+    position: absolute;
+    right:  10px;
+    bottom: 10px;
+    border: 1px solid black;
+    padding: 5px; 
+}
+
+.newNoteButton {
+    padding: 10px;
+    border: 1px solid black;
+    width: 40%;
+}
