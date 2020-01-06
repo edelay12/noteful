@@ -69,16 +69,53 @@ export default class App extends React.Component {
       selNote: e
     });
   };
-
+updateNotes = () => {
+  fetch("http://localhost:9090/notes")
+  .then(Response => {
+    if (Response.ok) {
+      return Response.json();
+    }
+    throw new Error(Response.statusText);
+  })
+  .then(ResponsJson => {
+    console.log("response: ");
+    console.log(ResponsJson);
+    this.notesUpdate(ResponsJson);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+}
  deleteNote = e => {
    console.log('delete note')
-   const arr = this.state.notes.filter((item) => {
+  /* const arr = this.state.notes.filter((item) => {
      return item.id !== e
    })
 
    this.setState({
      notes : arr
-   })
+   }) */
+
+   fetch(`http://localhost:9090/notes/${e}`, {
+    method: 'DELETE',
+    headers: {
+      'content-type': 'application/json'
+    },
+  })
+  .then(Response => {
+    if (Response.ok) {
+      console.log(Response)
+      return this.updateNotes()
+    }
+    throw new Error(Response.statusText);
+  })
+  
+  .catch(err => {
+    console.log(err);
+  });
+  
+
+
  }
 
   notesUpdate = e => {
