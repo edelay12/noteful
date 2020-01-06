@@ -1,18 +1,22 @@
 import React from 'react';
 import '../SideBar/sideBar.css'
 import { NavLink } from 'react-router-dom'
-
+import mainContext from './../../Context'
 
 export default function SideBar(props) {
 
 
     return (
+      <mainContext.Consumer>
+          {mainContext =>
        <>
+      
+      
         <ul className = 'folderList'>
-        {props.folders.map((item, index) => 
+        {mainContext.state.folders.map((item, index) => 
         
            <li onClick={() => props.click(item.id)} key={item.id}> 
-            <NavLink to={`/folder/${item.id}`} activeClassName='selectedLink'>
+            <NavLink to={`/folder/${item.id}`}  className='inactive' activeClassName='selectedLink'>
               <div className= 'linkContainer'>
            <h1 className='linkName'>{item.name}</h1>
            </div>
@@ -21,6 +25,10 @@ export default function SideBar(props) {
         )}
               </ul>
               <button className='addFolderButton'>Add Folder</button>
+        
+              
               </>
+        }
+              </mainContext.Consumer>
     )
 }
