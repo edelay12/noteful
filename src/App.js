@@ -8,7 +8,7 @@ import NoteAreaNote from "./components/NoteArea/NoteArea-Note";
 import Store from "./Store";
 import SideBarFolder from "./components/SideBar/SideBar-Folder";
 import contextMain from "./Context";
-
+import NewFolder from './components/SideBar/NewFolder'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -19,8 +19,16 @@ export default class App extends React.Component {
       notes: [],
       show: false,
       selFolder: null,
-      selNote: null
+      selNote: null,
+      folderAdd : null
     };
+  }
+  folderAdd = e => {
+    console.log('adding folder')
+if (this.state.show) {
+  return this.setState({show : false})
+} 
+this.setState({show : true});
   }
 
   componentDidMount() {
@@ -160,6 +168,7 @@ updateNotes = () => {
                   <SideBar
                     click={this.folderClick}
                     folders={this.state.folders}
+                    show={this.folderAdd}
                   />
                 )}
               />
@@ -206,6 +215,7 @@ updateNotes = () => {
             </ul>
             <button className="newNoteButton">New Note</button>
           </div>
+         {(this.state.show) && <NewFolder folders={(e) => this.folderUpdate }/>}
         </div>
       </contextMain.Provider>
     );

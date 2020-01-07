@@ -1,0 +1,29 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.addFolderFrame {
+    z-index: 3;
+    position: absolute;
+    width: 240px;
+    height: 350px;
+    left: 20%;
+  bottom: 20%;
+    background: wheat;
+    border: 1px solid #fff;
+}
+.addFolderForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 30%
+}
+.submitButton {
+    width: 70px;
+    height: 30px;
+    background: none;
+    border: 1px solid #fff;
+}

@@ -10,8 +10,6 @@ export default function SideBar(props) {
       <mainContext.Consumer>
           {mainContext =>
        <>
-      
-      
         <ul className = 'folderList'>
         {mainContext.state.folders.map((item, index) => 
         
@@ -24,7 +22,7 @@ export default function SideBar(props) {
            </li>
         )}
               </ul>
-              <button className='addFolderButton'>Add Folder</button>
+              <button className='addFolderButton' onClick={props.show}>Add Folder</button>
         
               
               </>
