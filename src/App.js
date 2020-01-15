@@ -9,6 +9,8 @@ import Store from "./Store";
 import SideBarFolder from "./components/SideBar/SideBar-Folder";
 import contextMain from "./Context";
 import NewFolder from './components/SideBar/NewFolder'
+import NewNote from "./components/NoteArea/newNote";
+import HandleError from './components/handleError';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -18,10 +20,19 @@ export default class App extends React.Component {
       folders: [],
       notes: [],
       show: false,
+      showNote: false,
       selFolder: null,
       selNote: null,
-      folderAdd : null
+      folderAdd : null,
+      selNoteFolder : null,
     };
+  }
+
+  noteAdd = e => {
+    if (this.state.showNote) {
+      return this.setState({showNote : false})
+    } 
+    this.setState({showNote : true});
   }
   folderAdd = e => {
     console.log('adding folder')
@@ -71,10 +82,12 @@ this.setState({show : true});
     console.log("state: " + this.state.selFolder);
   };
 
-  noteClick = e => {
+  noteClick = (e , l)=> {
     console.log(e);
+    console.log('this is l: ' +l)
     this.setState({
-      selNote: e
+      selNote: e,
+      selNoteFolder: l
     });
   };
 updateNotes = () => {
@@ -113,7 +126,7 @@ updateNotes = () => {
   .then(Response => {
     if (Response.ok) {
       console.log(Response)
-      return this.updateNotes()
+      return this.updateNotes();
     }
     throw new Error(Response.statusText);
   })
@@ -129,13 +142,11 @@ updateNotes = () => {
   notesUpdate = e => {
     this.setState({ notes: e });
     console.log("folders ran");
-    setTimeout(console.log("timeout"), 3000);
   };
 
-  folderUpdate = e => {
+  folderUpdate = (e) => {
+    console.log("folders update from app ran");
     this.setState({ folders: e });
-    console.log("folders ran");
-    setTimeout(console.log(this.state.notes), 300);
   };
 
   render() {
@@ -149,7 +160,7 @@ updateNotes = () => {
               <h1 className="banner">Noteful</h1>
             </Link>
           </div>
-
+<HandleError>
           <div className="SideBar">
             <Switch>
               <Route
@@ -183,7 +194,8 @@ updateNotes = () => {
               />
             </Switch>
           </div>
-
+          </HandleError>
+         <HandleError>
           <div className="NoteArea">
             <ul className="notesList">
               <Switch>
@@ -213,11 +225,15 @@ updateNotes = () => {
                 />
               </Switch>
             </ul>
-            <button className="newNoteButton">New Note</button>
+            <button className="newNoteButton" onClick={this.noteAdd}>New Note</button>
           </div>
-         {(this.state.show) && <NewFolder folders={(e) => this.folderUpdate }/>}
+          </HandleError>
+         {(this.state.show) && <NewFolder toggleFolders = {this.folderAdd} folders={this.folderUpdate}/>}
+         {(this.state.showNote) && <NewNote toggleNotes={this.noteAdd} notes={this.notesUpdate} folders={this.state.folders}/>}
         </div>
+       
       </contextMain.Provider>
+      
     );
   }
 }

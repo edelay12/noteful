@@ -19,11 +19,15 @@
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    height: 30%
+    height: fit-content;
 }
 .submitButton {
     width: 70px;
     height: 30px;
     background: none;
     border: 1px solid #fff;
+}
+
+.addFolderForm > * {
+margin: 5px 0;
 }

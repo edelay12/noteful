@@ -2,6 +2,7 @@ import React from 'react';
 import {NavLink} from 'react-router-dom'
 import mainContext from './../../Context'
 
+
 export default function NoteAreaNote(props) {
 
     const context = React.useContext(mainContext);

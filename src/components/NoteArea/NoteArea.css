@@ -38,3 +38,40 @@ margin: 5px;
     border: 1px solid black;
     width: 40%;
 }
+
+.newNoteForm {
+    z-index: 3;
+    position: absolute;
+    width: 240px;
+    height: 350px;
+    left: 20%;
+  bottom: 20%;
+    background: wheat;
+    border: 1px solid #fff;
+
+}
+
+.noteForm * {
+    color: black;
+}
+
+.noteForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: fit-content;
+}
+
+.newNoteSubmit , .noteSelect {
+    width: 90px;
+    height: 35px;
+    background: none;
+    border: 1px solid #fff;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    font-size: 20px;
+}
+
+

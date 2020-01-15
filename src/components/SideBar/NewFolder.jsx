@@ -31,22 +31,23 @@ return text;
 
  handleNewFolderSubmit = (e) =>{
         e.preventDefault();
-        console.log('form sub')
+        console.log(this.state.name.value);
         
         fetch(`http://localhost:9090/folders/`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
-              name : this.state.name.value
             },
-            data: {
+            body: JSON.stringify({
                 name : this.state.name.value
-            }
+            })
           })
           .then(Response => {
             if (Response.ok) {
               console.log(Response)
-              return this.props.folders(Response)
+              this.folderUpdate();
+              return this.props.toggleFolders();
+
             }
             throw new Error(Response.statusText);
           })
@@ -56,6 +57,24 @@ return text;
           
 
       }
+
+      folderUpdate = () => {
+        fetch("http://localhost:9090/folders")
+        .then(Response => {
+          if (Response.ok) {
+            return Response.json();
+          }
+          throw new Error(Response.statusText);
+        })
+        .then(ResponseJson => {
+          console.log("Folder update ran");
+          this.props.folders(ResponseJson);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+      
 
     render(){
 return (
