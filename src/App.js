@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { DATABASE_URL } from './config'
 import { Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import SideBar from "./components/SideBar/SideBar-Main";
@@ -8,9 +9,10 @@ import NoteAreaNote from "./components/NoteArea/NoteArea-Note";
 import Store from "./Store";
 import SideBarFolder from "./components/SideBar/SideBar-Folder";
 import contextMain from "./Context";
-import NewFolder from './components/SideBar/NewFolder'
+import NewFolder from "./components/SideBar/NewFolder";
 import NewNote from "./components/NoteArea/newNote";
-import HandleError from './components/handleError';
+import HandleError from "./components/handleError";
+
 
 export default class App extends React.Component {
   constructor(props) {
@@ -23,27 +25,26 @@ export default class App extends React.Component {
       showNote: false,
       selFolder: null,
       selNote: null,
-      folderAdd : null,
-      selNoteFolder : null,
+      folderAdd: null,
+      selNoteFolder: null
     };
   }
 
   noteAdd = e => {
     if (this.state.showNote) {
-      return this.setState({showNote : false})
-    } 
-    this.setState({showNote : true});
-  }
+      return this.setState({ showNote: false });
+    }
+    this.setState({ showNote: true });
+  };
   folderAdd = e => {
-    console.log('adding folder')
-if (this.state.show) {
-  return this.setState({show : false})
-} 
-this.setState({show : true});
-  }
+    if (this.state.show) {
+      return this.setState({ show: false });
+    }
+    this.setState({ show: true });
+  };
 
   componentDidMount() {
-    fetch("http://localhost:9090/notes")
+    fetch(`${DATABASE_URL}/notes`)
       .then(Response => {
         if (Response.ok) {
           return Response.json();
@@ -51,15 +52,13 @@ this.setState({show : true});
         throw new Error(Response.statusText);
       })
       .then(ResponsJson => {
-        console.log("response: ");
-        console.log(ResponsJson);
         this.notesUpdate(ResponsJson);
       })
       .catch(err => {
         console.log(err);
       });
 
-    fetch("http://localhost:9090/folders")
+    fetch(`${DATABASE_URL}/folders`)
       .then(Response => {
         if (Response.ok) {
           return Response.json();
@@ -67,8 +66,6 @@ this.setState({show : true});
         throw new Error(Response.statusText);
       })
       .then(ResponseJson => {
-        console.log("notes ran");
-        console.log(ResponseJson);
         this.folderUpdate(ResponseJson);
       })
       .catch(err => {
@@ -77,82 +74,110 @@ this.setState({show : true});
   }
 
   folderClick = e => {
-    console.log(e);
+
     this.setState({ selFolder: e });
-    console.log("state: " + this.state.selFolder);
+
   };
 
-  noteClick = (e , l)=> {
-    console.log(e);
-    console.log('this is l: ' +l)
+  noteClick = (e, l) => {
+
     this.setState({
       selNote: e,
       selNoteFolder: l
     });
   };
-updateNotes = () => {
-  fetch("http://localhost:9090/notes")
-  .then(Response => {
-    if (Response.ok) {
-      return Response.json();
+
+  updateFolders = () => {
+
+    fetch(`${DATABASE_URL}/folders`)
+      .then(Response => {
+        if (Response.ok) {
+          return Response.json();
+        }
+        throw new Error(Response.statusText);
+      })
+      .then(ResponsJson => {
+       return this.folderUpdate(ResponsJson);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     }
-    throw new Error(Response.statusText);
-  })
-  .then(ResponsJson => {
-    console.log("response: ");
-    console.log(ResponsJson);
-    this.notesUpdate(ResponsJson);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-}
- deleteNote = e => {
-   console.log('delete note')
-  /* const arr = this.state.notes.filter((item) => {
-     return item.id !== e
-   })
 
-   this.setState({
-     notes : arr
-   }) */
+  updateNotes = () => {
+    fetch(`${DATABASE_URL}/notes`)
+      .then(Response => {
+        if (Response.ok) {
+          return Response.json();
+        }
+        throw new Error(Response.statusText);
+      })
+      .then(ResponsJson => {
+   
+        this.notesUpdate(ResponsJson);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  deleteNote = e => {
+    
+    fetch(`${DATABASE_URL}/notes/${e}`, {
+      method: "DELETE",
+      headers: {
+        "content-type": "application/json"
+      }
+    })
+      .then(Response => {
+        if (Response.ok) {
+          return this.updateNotes();
+        }
+        throw new Error(Response.statusText);
+      })
 
-   fetch(`http://localhost:9090/notes/${e}`, {
-    method: 'DELETE',
-    headers: {
-      'content-type': 'application/json'
-    },
-  })
-  .then(Response => {
-    if (Response.ok) {
-      console.log(Response)
-      return this.updateNotes();
-    }
-    throw new Error(Response.statusText);
-  })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  deleteFolder = e => {
+
+    fetch(`${DATABASE_URL}/folders/${e}`, {
+      method: "DELETE",
+      headers: {
+        "content-type": "application/json"  
+      }
+    })
+      .then(Response => {
+        if (Response.ok) {
   
-  .catch(err => {
-    console.log(err);
-  });
-  
+         this.updateFolders();
+        }
+        throw new Error(Response.statusText);
+      })
 
-
- }
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   notesUpdate = e => {
     this.setState({ notes: e });
-    console.log("folders ran");
   };
 
-  folderUpdate = (e) => {
-    console.log("folders update from app ran");
+  folderUpdate = e => {
     this.setState({ folders: e });
   };
 
   render() {
     return (
       <contextMain.Provider
-        value={{ state: this.state, updateNotes: this.notesUpdate , del : this.deleteNote}}
+        value={{
+          state: this.state,
+          updateNotes: this.notesUpdate,
+          del: this.deleteNote,
+          delFolder : this.deleteFolder
+        }}
       >
         <div className="App">
           <div className="Header">
@@ -160,80 +185,94 @@ updateNotes = () => {
               <h1 className="banner">Noteful</h1>
             </Link>
           </div>
-<HandleError>
-          <div className="SideBar">
-            <Switch>
-              <Route
-                exact
-                path="/"
-                render={rprops => (
-                  <SideBar
-                    click={this.folderClick}
-                    folders={this.state.folders}
-                  />
-                )}
-              />
-              <Route
-                path="/folder/"
-                render={rprops => (
-                  <SideBar
-                    click={this.folderClick}
-                    folders={this.state.folders}
-                    show={this.folderAdd}
-                  />
-                )}
-              />
-              <Route
-                path="/note/"
-                render={({ history }, props) => (
-                  <SideBarFolder
-                    history={history}
-                    folders={this.state.folders}
-                  />
-                )}
-              />
-            </Switch>
-          </div>
-          </HandleError>
-         <HandleError>
-          <div className="NoteArea">
-            <ul className="notesList">
+          <HandleError>
+            <div className="SideBar">
               <Switch>
                 <Route
                   exact
                   path="/"
-                  render={props => <NoteArea notes={this.state.notes} />}
-                />
-                <Route
-                  path="/folder/:itemid"
-                  render={props => (
-                    <NoteAreaFolder
-                      click={this.noteClick}
-                      selId={this.state.selFolder}
-                      notes={this.state.notes}
+                  render={rprops => (
+                    <SideBar
+                      click={this.folderClick}
+                      folders={this.state.folders}
+                      show={this.folderAdd}
                     />
                   )}
                 />
                 <Route
-                  path={`/note/${this.state.selNote}`}
-                  render={props => (
-                    <NoteAreaNote
-                      notes={this.state.notes}
-                      selId={this.state.selNote}
+                  path="/folder/"
+                  render={rprops => (
+                    <SideBar
+                      click={this.folderClick}
+                      foldernum={this.state.selFolder}
+                      folders={this.state.folders}
+                      show={this.folderAdd}
+                    />
+                  )}
+                />
+                <Route
+                  path="/note/"
+                  render={({ history }, props) => (
+                    <SideBarFolder
+                      history={history}
+                      folders={this.state.folders}
                     />
                   )}
                 />
               </Switch>
-            </ul>
-            <button className="newNoteButton" onClick={this.noteAdd}>New Note</button>
-          </div>
+            </div>
           </HandleError>
-         {(this.state.show) && <NewFolder toggleFolders = {this.folderAdd} folders={this.folderUpdate}/>}
-         {(this.state.showNote) && <NewNote toggleNotes={this.noteAdd} notes={this.notesUpdate} folders={this.state.folders}/>}
+          <HandleError>
+            <div className="NoteArea">
+              <ul className="notesList">
+                <Switch>
+                  <Route
+                    exact
+                    path="/"
+                    render={props => <NoteArea notes={this.state.notes} />}
+                  />
+                  <Route
+                    path="/folder/:itemid"
+                    render={props => (
+                      <NoteAreaFolder
+                        click={this.noteClick}
+                        selId={this.state.selFolder}
+                        notes={this.state.notes}
+                      />
+                    )}
+                  />
+                  <Route
+                    path={`/note/${this.state.selNote}`}
+                    render={props => (
+                      <NoteAreaNote
+                        notes={this.state.notes}
+                        selId={this.state.selNote}
+                        selFolder={this.state.selFolder}
+                      />
+                    )}
+                  />
+                </Switch>
+              </ul>
+              <button className="newNoteButton" onClick={this.noteAdd}>
+                New Note
+              </button>
+            </div>
+          </HandleError>
+          {this.state.show && (
+            <NewFolder
+              toggleFolders={this.folderAdd}
+              folders={this.folderUpdate}
+            />
+          )}
+          {this.state.showNote && (
+            <NewNote
+              toggleNotes={this.noteAdd}
+              notes={this.notesUpdate}
+              folders={this.state.folders}
+            />
+          )}
         </div>
-       
       </contextMain.Provider>
-      
     );
   }
 }

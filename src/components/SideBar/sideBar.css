@@ -19,8 +19,7 @@
 .folderList li {
 
     padding: 5px;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+margin: 5px 0;
  
 }
 
@@ -51,7 +50,21 @@ height: 100%;
 
 .selectedLink {
     background-color: blue !important;
-    color: red !important;
+    color:rgb(171, 180, 187) !important;
     width: 100% !important;
     height: 100% !important;
+    font-size: 18px !important;
+}
+
+.currentFolder {
+    margin-top: 20px;
+    font-size: 30px;
+}
+
+.backButton {
+    padding: 5px;
+    width: 100px;
+    font-size: 20px;
+    border: 2px solid whitesmoke;
+    background: none;
 }

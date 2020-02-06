@@ -11,7 +11,7 @@ export default function NoteArea(props){
   
          {mainContext.state.notes.map((note) =>
          <li key ={note.id}>
-             <h3>{note.name}</h3>
+             <h3 className='noteLabel'>{note.name}</h3>
              <h6> Date modified: <br/>{note.modified}</h6>
              <button className='deleteNoteButton' value={note.id} onClick={() => mainContext.del(note.id)}>Delete</button>
          </li>

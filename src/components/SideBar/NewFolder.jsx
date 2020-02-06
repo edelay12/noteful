@@ -1,4 +1,5 @@
 import React from 'react';
+import { DATABASE_URL } from '../../config'
 import mainContext from './../../Context'
 import './newfolder.css'
 
@@ -9,12 +10,12 @@ export default class NewFolder extends React.Component {
         this.state = {
           name: {
             value: "",
-            touched: false
+            touched: false,
+            throw: false,
           }
         };
       }
 handleChange(e) {
-    console.log(e)
     this.setState({name : { value : e , touched: true}})
 }
 
@@ -30,10 +31,19 @@ return text;
 }
 
  handleNewFolderSubmit = (e) =>{
-        e.preventDefault();
-        console.log(this.state.name.value);
+        e.preventDefault();        
+
+        if (!this.state.name.touched) {
+         return this.setState({name : {
+            throw : true
+          }})
+        } else {
+          this.setState({name : {
+            throw : false
+          }})
         
-        fetch(`http://localhost:9090/folders/`, {
+       
+        fetch(`${DATABASE_URL}/folders`, {
             method: 'POST',
             headers: {
               'content-type': 'application/json',
@@ -44,7 +54,6 @@ return text;
           })
           .then(Response => {
             if (Response.ok) {
-              console.log(Response)
               this.folderUpdate();
               return this.props.toggleFolders();
 
@@ -55,11 +64,11 @@ return text;
             console.log(err);
           });
           
-
+        }
       }
 
       folderUpdate = () => {
-        fetch("http://localhost:9090/folders")
+        fetch(`${DATABASE_URL}/folders`)
         .then(Response => {
           if (Response.ok) {
             return Response.json();
@@ -67,7 +76,6 @@ return text;
           throw new Error(Response.statusText);
         })
         .then(ResponseJson => {
-          console.log("Folder update ran");
           this.props.folders(ResponseJson);
         })
         .catch(err => {
@@ -82,7 +90,8 @@ return (
 <div className='addFolderFrame'>
 <form onSubmit={this.handleNewFolderSubmit} className='addFolderForm'>
 <p>Name of folder: </p>
-<input type="text" onChange={(e) => this.handleChange(e.target.value)}/> 
+{this.state.name.throw && (<p style={{color : "red"}}>Name is required</p>)}
+<input className='nameFolderInput' type="text" onChange={(e) => this.handleChange(e.target.value)}/> 
 
 <button className="submitButton" type='submit'>Add</button>
 </form>

@@ -15,10 +15,37 @@
 }
 .notesList li{
     width: 100%;
-    border: 1px solid black;
+    border: 2px solid whitesmoke;
     padding: 5px;
     margin: 10px;
     position: relative;
+}
+.note {
+    width: 100%;
+    position: relative;
+}
+.nName {
+    font-size: 30px !important;
+}
+.dModified {
+    font-size: 16px;
+    margin: 10px;
+    width: 100%;
+}
+.contentContainer{
+    margin-top: 10px;
+    width: 100%;
+    max-height: 90%;
+
+    padding: 15px;
+    background:rgb(56, 93, 119);
+}
+.noteLabel , h3{
+    color: whitesmoke;
+}
+Link {
+    color: whitesmoke;
+    text-decoration: none;
 }
 .notesList li > h3, h6 {
 text-align: left;
@@ -27,8 +54,8 @@ margin: 5px;
 
 .deleteNoteButton {
     position: absolute;
-    right:  10px;
-    bottom: 10px;
+    right:  5px;
+    bottom: 5px;
     border: 1px solid black;
     padding: 5px; 
 }
@@ -42,17 +69,19 @@ margin: 5px;
 .newNoteForm {
     z-index: 3;
     position: absolute;
-    width: 240px;
-    height: 350px;
-    left: 20%;
-  bottom: 20%;
-    background: wheat;
-    border: 1px solid #fff;
+    width: 400px;
+    height: 600px;
+    top: 10vh;
+    left: 5vh;
+    background: rgb(56, 93, 119);;
+    border: 2px solid whitesmoke;
 
 }
 
 .noteForm * {
-    color: black;
+    color: whitesmoke;
+    margin: 3px;
+    width: 90%;
 }
 
 .noteForm {
@@ -60,11 +89,23 @@ margin: 5px;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    height: fit-content;
+    height: 100%;
+}
+.contentInput {
+    height: 50%;
+    color: black !important;
+    font-size: 20px;
+ 
 }
 
-.newNoteSubmit , .noteSelect {
-    width: 90px;
+.nameInput {
+    font-size: 20px;
+    height: 35px;
+    color: black !important;
+}
+
+.newNoteSubmit , .noteSelect , option{
+    width: 90%;
     height: 35px;
     background: none;
     border: 1px solid #fff;
@@ -72,6 +113,7 @@ margin: 5px;
     padding: 5px;
     text-align: center;
     font-size: 20px;
+    color: black;
 }
 
 

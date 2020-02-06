@@ -1,4 +1,5 @@
 import React from "react";
+import { DATABASE_URL } from '../../config'
 import "./NoteArea.css";
 
 export default class NewNote extends React.Component {
@@ -15,7 +16,7 @@ export default class NewNote extends React.Component {
         touched: false
       },
       folder: {
-        value: "",
+        value: 1,
         touched: false
       },
       folders: null
@@ -29,19 +30,20 @@ export default class NewNote extends React.Component {
     this.setState({ content: { value: e, touched: true } });
   };
   selectChange = e => {
+
     this.setState({ folder: { value: e, touched: true } });
   };
 
   handleSubmit = e => {
     //need to verify fields
     e.preventDefault();
-    if (this.state.name.touched) {
-      this.setState({ name: { throw: false } });
-      console.log("new note submit");
-
-      console.log(this.state.name.value);
-
-      fetch(`http://localhost:9090/notes`, {
+    if (this.state.name.touched == false) {
+      return this.setState({ name: { throw: true }});
+    }
+    else if  (this.state.folder.touched == false) {
+      return this.setState({ folder: { throw: true }});
+    } else {
+      fetch(`${DATABASE_URL}/notes`, {
         method: "POST",
         headers: {
           "content-type": "application/json"
@@ -49,12 +51,11 @@ export default class NewNote extends React.Component {
         body: JSON.stringify({
           name: this.state.name.value,
           content: this.state.content.value,
-          folderId: this.state.folder.value
+          foldernum: this.state.folder.value
         })
       })
         .then(Response => {
           if (Response.ok) {
-            console.log(Response);
             this.notesUpdate();
             return this.props.toggleNotes();
           }
@@ -63,12 +64,29 @@ export default class NewNote extends React.Component {
         .catch(err => {
           console.log(err);
         });
-    } else {
-      return this.setState({ name: { throw: true } });
-    }
+      }
   };
+componentDidMount(){
+this.setState({
+  name: {
+    value: "",
+    touched: false,
+    throw: false
+  },
+  content: {
+    value: "",
+    touched: false
+  },
+  folder: {
+    value: 1,
+    touched: false
+  },
+  folders: null
+});
+}
+
   notesUpdate = e => {
-    fetch("http://localhost:9090/notes")
+    fetch(`${DATABASE_URL}/notes`)
       .then(Response => {
         if (Response.ok) {
           return Response.json();
@@ -76,7 +94,6 @@ export default class NewNote extends React.Component {
         throw new Error(Response.statusText);
       })
       .then(ResponseJson => {
-        console.log("new note update--");
         return this.props.notes(ResponseJson);
       })
       .catch(err => {
@@ -84,16 +101,14 @@ export default class NewNote extends React.Component {
       });
   };
 
-  componentDidMount() {
-    //get folder list
-  }
+ //
 
   render() {
     return (
       <div className="newNoteForm">
         <form className="noteForm" onSubmit={this.handleSubmit}>
           <p>Name</p>
-          <input
+          <input className='nameInput'
             onChange={e => this.handleChange(e.target.value)}
             type="text"
           />
@@ -103,15 +118,21 @@ export default class NewNote extends React.Component {
             </p>
           )}
           <p>Content</p>
-          <input
+          <input className='contentInput'
             onChange={e => this.contentChange(e.target.value)}
             type="text"
           />
 
+ {this.state.folder.throw && (
+            <p style={{ color: "red" }} className="nameErrorText">
+              Please select a folder
+            </p>
+          )}
           <select
             onChange={e => this.selectChange(e.target.value)}
             className="noteSelect"
           >
+            <option defaultValue value={null}>Please select a folder...</option>
             {this.props.folders.map(item => (
               <option value={item.id}>{item.name}</option>
             ))}
