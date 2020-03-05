@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DATABASE_URL } from './config'
+import { DATABASE_URL } from "./config";
 import { Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import SideBar from "./components/SideBar/SideBar-Main";
@@ -12,7 +12,8 @@ import contextMain from "./Context";
 import NewFolder from "./components/SideBar/NewFolder";
 import NewNote from "./components/NoteArea/newNote";
 import HandleError from "./components/handleError";
-
+import FolderService from "./services/folder-api-service";
+import NoteService from "./services/note-api-service";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -26,45 +27,30 @@ export default class App extends React.Component {
       selFolder: null,
       selNote: null,
       folderAdd: null,
-      selNoteFolder: null
+      selNoteFolder: null,
+      foldersToggle: false,
     };
   }
 
-  noteAdd = e => {
-    if (this.state.showNote) {
-      return this.setState({ showNote: false });
-    }
-    this.setState({ showNote: true });
+  noteAdd = () => {
+    this.setState({ showNote: !this.state.showNote });
   };
+
   folderAdd = e => {
-    if (this.state.show) {
-      return this.setState({ show: false });
-    }
-    this.setState({ show: true });
+    this.setState({ show: !this.state.show });
   };
 
   componentDidMount() {
-    fetch(`${DATABASE_URL}/notes`)
-      .then(Response => {
-        if (Response.ok) {
-          return Response.json();
-        }
-        throw new Error(Response.statusText);
-      })
-      .then(ResponsJson => {
-        this.notesUpdate(ResponsJson);
+    NoteService.getNotes()
+      .then(ResponseJson => {
+        console.log(ResponseJson);
+        this.notesUpdate(ResponseJson);
       })
       .catch(err => {
         console.log(err);
       });
 
-    fetch(`${DATABASE_URL}/folders`)
-      .then(Response => {
-        if (Response.ok) {
-          return Response.json();
-        }
-        throw new Error(Response.statusText);
-      })
+    FolderService.getFolders()
       .then(ResponseJson => {
         this.folderUpdate(ResponseJson);
       })
@@ -74,13 +60,10 @@ export default class App extends React.Component {
   }
 
   folderClick = e => {
-
     this.setState({ selFolder: e });
-
   };
 
   noteClick = (e, l) => {
-
     this.setState({
       selNote: e,
       selNoteFolder: l
@@ -88,85 +71,47 @@ export default class App extends React.Component {
   };
 
   updateFolders = () => {
-
-    fetch(`${DATABASE_URL}/folders`)
-      .then(Response => {
-        if (Response.ok) {
-          return Response.json();
-        }
-        throw new Error(Response.statusText);
-      })
+    FolderService.getFolders()
       .then(ResponsJson => {
-       return this.folderUpdate(ResponsJson);
+        return this.folderUpdate(ResponsJson);
       })
       .catch(err => {
         console.log(err);
       });
-    }
+  };
 
   updateNotes = () => {
-    fetch(`${DATABASE_URL}/notes`)
-      .then(Response => {
-        if (Response.ok) {
-          return Response.json();
-        }
-        throw new Error(Response.statusText);
-      })
+    NoteService.getNotes()
       .then(ResponsJson => {
-   
         this.notesUpdate(ResponsJson);
       })
       .catch(err => {
         console.log(err);
       });
   };
-  deleteNote = e => {
-    
-    fetch(`${DATABASE_URL}/notes/${e}`, {
-      method: "DELETE",
-      headers: {
-        "content-type": "application/json"
-      }
-    })
-      .then(Response => {
-        if (Response.ok) {
-          return this.updateNotes();
-        }
-        throw new Error(Response.statusText);
-      })
 
+  deleteNote = note => {
+    NoteService.deleteNote(note)
+      .then(() => this.updateNotes())
       .catch(err => {
         console.log(err);
       });
   };
 
-  deleteFolder = e => {
-
-    fetch(`${DATABASE_URL}/folders/${e}`, {
-      method: "DELETE",
-      headers: {
-        "content-type": "application/json"  
-      }
-    })
-      .then(Response => {
-        if (Response.ok) {
-  
-         this.updateFolders();
-        }
-        throw new Error(Response.statusText);
-      })
-
+  deleteFolder = folder => {
+    FolderService.deleteFolder(folder)
+      .then(() => this.updateFolders())
       .catch(err => {
         console.log(err);
       });
   };
 
-  notesUpdate = e => {
-    this.setState({ notes: e });
+  notesUpdate = notes => {
+    this.setState({ notes: notes });
   };
 
-  folderUpdate = e => {
-    this.setState({ folders: e });
+  folderUpdate = newFolders => {
+    this.setState({ folders: newFolders });
   };
 
   render() {
@@ -176,17 +121,22 @@ export default class App extends React.Component {
           state: this.state,
           updateNotes: this.notesUpdate,
           del: this.deleteNote,
-          delFolder : this.deleteFolder
+          delFolder: this.deleteFolder
         }}
       >
         <div className="App">
           <div className="Header">
-            <Link to="/" className="banner">
-              <h1 className="banner">Noteful</h1>
-            </Link>
+            <div className="logoContainer">
+              <Link to="/" className="banner">
+                <span className="banner">EvanNote</span>
+              </Link>
+              <Link to="/about" className="banner">
+                <span className="bannerSub">About</span>
+              </Link>
+            </div>
           </div>
           <HandleError>
-            <div className="SideBar">
+            <div className={this.state.foldersToggle ? 'SidebarOn' : 'SideBar'}>
               <Switch>
                 <Route
                   exact
@@ -224,6 +174,7 @@ export default class App extends React.Component {
           </HandleError>
           <HandleError>
             <div className="NoteArea">
+              <span className='foldersToggle' onClick={()=> this.setState({foldersToggle: !this.state.foldersToggle})}>Folders</span>
               <ul className="notesList">
                 <Switch>
                   <Route
@@ -254,7 +205,7 @@ export default class App extends React.Component {
                 </Switch>
               </ul>
               <button className="newNoteButton" onClick={this.noteAdd}>
-                New Note
+                Add Note
               </button>
             </div>
           </HandleError>

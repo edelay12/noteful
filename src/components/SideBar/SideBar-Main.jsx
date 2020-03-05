@@ -23,8 +23,8 @@ export default function SideBar(props) {
            </li>
         )}
               </ul>
-              <button className='addFolderButton' onClick={props.show}>Add Folder</button>
-              <button className='addFolderButton' onClick={() => mainContext.delFolder(props.foldernum)}>Remove folder</button>
+              <button className='folderButton' onClick={props.show}>Add Folder</button>
+              <button className='folderButton' onClick={() => mainContext.delFolder(props.foldernum)}>Remove folder</button>
         
               
               </>

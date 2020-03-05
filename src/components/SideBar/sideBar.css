@@ -8,7 +8,10 @@
     list-style: none;
     width: 100%;
     margin-top: 5px;
-
+position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
 }
 .folderList a {
     text-decoration: none;
@@ -17,18 +20,19 @@
     height: 100%;
 }
 .folderList li {
-
-    padding: 5px;
+width: 90%;
+    padding: 15px 10px;
 margin: 5px 0;
- 
+ border-bottom: 1px solid lightgrey;
 }
 
-.addFolderButton {
-    margin-top: 10px;
+.folderButton {
+    margin: 20px auto;
     padding:10px;
-    width: 70%;
-    border: 1px solid black;
+    border: 1px solid lightgrey;
     background: none;
+    display: block;
+    white-space: nowrap;
 }
 
 .linkContainer {
@@ -38,8 +42,7 @@ height: 100%;
 }
 
 .linkName {
-
-   
+    font-size: 18px;
 }
 
 .inactive {
@@ -65,6 +68,11 @@ height: 100%;
     padding: 5px;
     width: 100px;
     font-size: 20px;
-    border: 2px solid whitesmoke;
+    border: 1px solid lightgray;
     background: none;
+}
+
+@media screen and (max-width: 880px) {
+
+
 }

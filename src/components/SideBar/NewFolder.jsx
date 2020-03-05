@@ -89,12 +89,13 @@ return (
 <>
 <div className='addFolderFrame'>
 <form onSubmit={this.handleNewFolderSubmit} className='addFolderForm'>
-<p>Name of folder: </p>
+<span>Name of folder: </span>
 {this.state.name.throw && (<p style={{color : "red"}}>Name is required</p>)}
 <input className='nameFolderInput' type="text" onChange={(e) => this.handleChange(e.target.value)}/> 
 
 <button className="submitButton" type='submit'>Add</button>
 </form>
+<span className="closeForm" type='button' onClick={this.props.toggleFolders}>X</span>
 </div>
 </>
     

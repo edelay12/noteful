@@ -18,7 +18,7 @@ return (
   <div className='note'>
     <h3 className='nName'>{note.name}</h3>
     <h6 className='dModified'> Date modified: <br/>{note.modified}</h6>
-    <button className='deleteNoteButton' value={note.id} onClick={() => context.del(note.id)}>Delete</button>
+    <button className='deleteNoteButton' value={note.id} onClick={() => context.del(note.id)}>X</button>
     </div>
 
     <section className='contentContainer'>

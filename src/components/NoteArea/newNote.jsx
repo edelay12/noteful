@@ -3,7 +3,7 @@ import { DATABASE_URL } from '../../config'
 import "./NoteArea.css";
 
 export default class NewNote extends React.Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       name: {
@@ -118,7 +118,7 @@ this.setState({
             </p>
           )}
           <p>Content</p>
-          <input className='contentInput'
+          <textarea className='contentInput'
             onChange={e => this.contentChange(e.target.value)}
             type="text"
           />
@@ -141,6 +141,7 @@ this.setState({
             Submit
           </button>
         </form>
+        <span className="closeForm" type='button' onClick={this.props.toggleNotes}>X</span>
       </div>
     );
   }
