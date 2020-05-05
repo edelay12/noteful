@@ -2,7 +2,7 @@ import React from 'react';
 import { DATABASE_URL } from '../../config'
 import mainContext from './../../Context'
 import './newfolder.css'
-
+import propTypes from 'prop-types';
 
 export default class NewFolder extends React.Component {
     constructor(props) {
@@ -103,3 +103,7 @@ return (
     }
 }
 
+NewFolder.propTypes = {
+  folders : propTypes.func,
+  toggleFolders: propTypes.func,
+ }

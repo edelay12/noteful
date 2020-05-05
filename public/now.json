@@ -1,6 +1,7 @@
 
 {
   "version": 2,
+  "alias": "emiller12-noteful-app",
   "name": "noteful-app",
   "routes": [
       { "handle": "filesystem" },

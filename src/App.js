@@ -14,7 +14,7 @@ import NewNote from "./components/NoteArea/newNote";
 import HandleError from "./components/handleError";
 import FolderService from "./services/folder-api-service";
 import NoteService from "./services/note-api-service";
-
+import EditNote from "./components/EditNotePage/EditNote";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +28,7 @@ export default class App extends React.Component {
       selNote: null,
       folderAdd: null,
       selNoteFolder: null,
-      foldersToggle: false,
+      foldersToggle: false
     };
   }
 
@@ -92,15 +92,16 @@ export default class App extends React.Component {
 
   deleteNote = note => {
     NoteService.deleteNote(note)
-      .then(() => this.updateNotes())
+      .then(res => this.updateNotes(res))
       .catch(err => {
         console.log(err);
       });
   };
 
   deleteFolder = folder => {
+    console.log("delete" + folder);
     FolderService.deleteFolder(folder)
-      .then(() => this.updateFolders())
+      .then(res => this.folderUpdate(res))
       .catch(err => {
         console.log(err);
       });
@@ -136,7 +137,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <HandleError>
-            <div className={this.state.foldersToggle ? 'SidebarOn' : 'SideBar'}>
+            <div className={this.state.foldersToggle ? "SidebarOn" : "SideBar"}>
               <Switch>
                 <Route
                   exact
@@ -174,13 +175,25 @@ export default class App extends React.Component {
           </HandleError>
           <HandleError>
             <div className="NoteArea">
-              <span className='foldersToggle' onClick={()=> this.setState({foldersToggle: !this.state.foldersToggle})}>Folders</span>
+              <span
+                className="foldersToggle"
+                onClick={() =>
+                  this.setState({ foldersToggle: !this.state.foldersToggle })
+                }
+              >
+                Folders
+              </span>
               <ul className="notesList">
                 <Switch>
                   <Route
                     exact
                     path="/"
-                    render={props => <NoteArea notes={this.state.notes} />}
+                    render={props => (
+                      <NoteArea
+                        click={this.noteClick}
+                        notes={this.state.notes}
+                      />
+                    )}
                   />
                   <Route
                     path="/folder/:itemid"
@@ -189,11 +202,13 @@ export default class App extends React.Component {
                         click={this.noteClick}
                         selId={this.state.selFolder}
                         notes={this.state.notes}
+                        noteAdd={this.noteAdd}
                       />
                     )}
                   />
                   <Route
-                    path={`/note/${this.state.selNote}`}
+                    exact
+                    path={`/note/:noteId`}
                     render={props => (
                       <NoteAreaNote
                         notes={this.state.notes}
@@ -202,11 +217,21 @@ export default class App extends React.Component {
                       />
                     )}
                   />
+                  <Route
+                    path={`/note/:noteId/edit`}
+                    render={({ history }, props) => (
+                      <EditNote
+                        history={history}
+                        toggleNotes={this.noteAdd}
+                        notes={this.state.notes}
+                        notesUpdate={this.notesUpdate}
+                        selId={this.state.selNote}
+                        folders={this.state.folders}
+                      />
+                    )}
+                  />
                 </Switch>
               </ul>
-              <button className="newNoteButton" onClick={this.noteAdd}>
-                Add Note
-              </button>
             </div>
           </HandleError>
           {this.state.show && (
@@ -218,7 +243,9 @@ export default class App extends React.Component {
           {this.state.showNote && (
             <NewNote
               toggleNotes={this.noteAdd}
-              notes={this.notesUpdate}
+              notes={this.state.notes}
+              notesUpdate={this.notesUpdate}
+              selId={this.state.selNote}
               folders={this.state.folders}
             />
           )}
@@ -227,3 +254,10 @@ export default class App extends React.Component {
     );
   }
 }
+
+/*
+ <button className="newNoteButton" onClick={this.noteAdd}>
+                Add Note
+              </button>
+
+              */

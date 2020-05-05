@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import { DATABASE_URL } from "../../config";
-import "./NoteArea.css";
+import "./EditNote.css";
+import NotesApiService from "../../services/note-api-service";
 import propTypes from 'prop-types';
-
-export default class NewNote extends React.Component {
+export default class EditNote extends Component {
   constructor() {
     super();
     this.state = {
@@ -20,7 +20,7 @@ export default class NewNote extends React.Component {
         value: 1,
         touched: false
       },
-      folders: null
+      folders: []
     };
   }
 
@@ -35,15 +35,15 @@ export default class NewNote extends React.Component {
   };
 
   handleSubmit = e => {
-    //need to verify fields
+    console.log("submit");
     e.preventDefault();
-    if (this.state.name.touched == false) {
+    if (!this.state.name.value) {
       return this.setState({ name: { throw: true } });
     } else if (this.state.folder.touched == false) {
       return this.setState({ folder: { throw: true } });
     } else {
-      fetch(`${DATABASE_URL}/notes`, {
-        method: "POST",
+      fetch(`${DATABASE_URL}/notes/${this.props.selId}`, {
+        method: "PATCH",
         headers: {
           "content-type": "application/json"
         },
@@ -55,8 +55,7 @@ export default class NewNote extends React.Component {
       })
         .then(Response => {
           if (Response.ok) {
-            this.notesUpdate();
-            return this.props.toggleNotes();
+            return this.notesUpdate();
           }
           throw new Error(Response.statusText);
         })
@@ -66,51 +65,51 @@ export default class NewNote extends React.Component {
     }
   };
   componentDidMount() {
-    this.setState({
-      name: {
-        value: "",
-        touched: false,
-        throw: false
-      },
-      content: {
-        value: "",
-        touched: false
-      },
-      folder: {
-        value: 1,
-        touched: false
-      },
-      folders: null
+    console.log(this.props.selId);
+    NotesApiService.getNoteId(this.props.selId).then(res => {
+      console.log(res);
+      this.setState({
+        name: {
+          value: res.name,
+          touched: false,
+          throw: false
+        },
+        content: {
+          value: res.content,
+          touched: false
+        },
+        folder: {
+          value: 1,
+          touched: false
+        },
+        folders: []
+      });
+      console.log(this.state);
     });
   }
 
-  notesUpdate = e => {
-    fetch(`${DATABASE_URL}/notes`)
-      .then(Response => {
-        if (Response.ok) {
-          return Response.json();
-        }
-        throw new Error(Response.statusText);
-      })
+  notesUpdate = () => {
+    NotesApiService.getNotes()
       .then(ResponseJson => {
         return this.props.notesUpdate(ResponseJson);
       })
+      .then(this.props.history.goBack)
       .catch(err => {
         console.log(err);
       });
   };
 
-  //
-
   render() {
     return (
-      <div className="newNoteForm">
-        <form className="noteForm" onSubmit={this.handleSubmit}>
+      <div className="editNoteForm">
+        <h1>Edit Note: {this.state.name.value}</h1>
+        <form className="editNoteForm" onSubmit={this.handleSubmit}>
           <p>Name</p>
           <input
             className="nameInput"
             onChange={e => this.handleChange(e.target.value)}
             type="text"
+            defaultValue={this.state.name.value}
           />
           {this.state.name.throw && (
             <p style={{ color: "red" }} className="nameErrorText">
@@ -122,6 +121,7 @@ export default class NewNote extends React.Component {
             className="contentInput"
             onChange={e => this.contentChange(e.target.value)}
             type="text"
+            defaultValue={this.state.content.value}
           />
 
           {this.state.folder.throw && (
@@ -144,20 +144,15 @@ export default class NewNote extends React.Component {
             Submit
           </button>
         </form>
-        <span
-          className="closeForm"
-          type="button"
-          onClick={this.props.toggleNotes}
-        >
-          X
-        </span>
       </div>
     );
   }
 }
 
-NewNote.propTypes = {
-  folders: propTypes.array,
-  toggleNotes : propTypes.func,
-  notesUpdate : propTypes.func
+
+EditNote.propTypes = {
+  folders : propTypes.array,
+  selId : propTypes.number,
+  updateNotes: propTypes.func
+
 }

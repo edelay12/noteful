@@ -2,7 +2,7 @@ import React from "react";
 import { DATABASE_URL } from "../../config";
 import { NavLink } from "react-router-dom";
 import mainContext from "./../../Context";
-import PropTypes from "prop-types";
+import propTypes from "prop-types";
 
 export default class NoteAreaFolder extends React.Component {
   static contextType = mainContext;
@@ -27,15 +27,16 @@ export default class NoteAreaFolder extends React.Component {
       return item.foldernum === this.props.selId;
     });
     return (
-      <>
+      <div className='column'>
+        <div className='notesContainer'>
         {arr.map(note => (
              
           <li id='noteLi' key={note.id}>
-           <NavLink to={`/note/${note.id}`}>
-              <h3 onClick={() => this.props.click(note.id, note.foldernum)}>
+           <NavLink to={`/note/${note.id}`} onClick={() => this.props.click(note.id, note.foldernum)}>
+              <h3 >
                 {note.name}
               </h3>{" "}
-            <h6 id='modified'>
+            <h6 className='noteModified'>
               {" "}
               Date modified: <br />
               {note.modified}
@@ -50,11 +51,17 @@ export default class NoteAreaFolder extends React.Component {
             </button>
           </li>
         ))}
-      </>
+        </div>
+        <button className="newNoteButton" onClick={this.props.noteAdd}>
+                Add Note
+              </button>
+      </div>
     );
   }
 }
 
 NoteAreaFolder.propTypes = {
-  value: PropTypes.string
+  value: propTypes.string,
+  selId: propTypes.number,
+  click : propTypes.func,
 };

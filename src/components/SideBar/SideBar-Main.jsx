@@ -2,7 +2,7 @@ import React from 'react';
 import '../SideBar/sideBar.css'
 import { NavLink } from 'react-router-dom'
 import mainContext from './../../Context'
-import PropTypes, { string } from 'prop-types'
+import PropTypes from 'prop-types'
 
 export default function SideBar(props) {
 
@@ -34,5 +34,8 @@ export default function SideBar(props) {
 }
 
 SideBar.propType = {
-   value : PropTypes.string
+   value : PropTypes.string,
+   show: PropTypes.func,
+   foldernum : PropTypes.number,
+   click : PropTypes.func
 };
