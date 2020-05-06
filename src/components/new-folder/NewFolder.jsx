@@ -1,6 +1,5 @@
 import React from 'react';
 import { DATABASE_URL } from '../../config'
-import mainContext from './../../Context'
 import './newfolder.css'
 import propTypes from 'prop-types';
 

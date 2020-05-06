@@ -19,6 +19,7 @@
   background: rgb(56, 93, 119);
 border: 2px solid rgb(131, 128, 128);
 }
+
 .addFolderForm {
     display: flex;
     flex-direction: column;

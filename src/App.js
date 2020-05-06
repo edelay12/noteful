@@ -8,9 +8,8 @@ import NoteAreaFolder from "./components/NoteArea/NoteArea-Folder";
 import NoteAreaNote from "./components/NoteArea/NoteArea-Note";
 import Store from "./Store";
 import SideBarFolder from "./components/SideBar/SideBar-Folder";
-import contextMain from "./Context";
-import NewFolder from "./components/SideBar/NewFolder";
-import NewNote from "./components/NoteArea/newNote";
+import NewFolder from "./components/new-folder/NewFolder";
+import NewNote from "./components/new-note/newNote";
 import HandleError from "./components/handleError";
 import FolderService from "./services/folder-api-service";
 import NoteService from "./services/note-api-service";
@@ -117,14 +116,6 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <contextMain.Provider
-        value={{
-          state: this.state,
-          updateNotes: this.notesUpdate,
-          del: this.deleteNote,
-          delFolder: this.deleteFolder
-        }}
-      >
         <div className="App">
           <div className="Header">
             <div className="logoContainer">
@@ -147,6 +138,7 @@ export default class App extends React.Component {
                       click={this.folderClick}
                       folders={this.state.folders}
                       show={this.folderAdd}
+                      delFolder={this.deleteFolder}
                     />
                   )}
                 />
@@ -167,6 +159,7 @@ export default class App extends React.Component {
                     <SideBarFolder
                       history={history}
                       folders={this.state.folders}
+                      selNoteFolder={this.state.selNoteFolder}
                     />
                   )}
                 />
@@ -192,6 +185,7 @@ export default class App extends React.Component {
                       <NoteArea
                         click={this.noteClick}
                         notes={this.state.notes}
+                        del={this.deleteNote}
                       />
                     )}
                   />
@@ -203,6 +197,8 @@ export default class App extends React.Component {
                         selId={this.state.selFolder}
                         notes={this.state.notes}
                         noteAdd={this.noteAdd}
+                        updateNotes={this.updateNotes}
+                        del={this.deleteNote}
                       />
                     )}
                   />
@@ -214,6 +210,7 @@ export default class App extends React.Component {
                         notes={this.state.notes}
                         selId={this.state.selNote}
                         selFolder={this.state.selFolder}
+                        del={this.deleteNote}
                       />
                     )}
                   />
@@ -250,7 +247,6 @@ export default class App extends React.Component {
             />
           )}
         </div>
-      </contextMain.Provider>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { DATABASE_URL } from "../../config";
-import "./NoteArea.css";
+import "../NoteArea/NoteArea.css";
 import propTypes from 'prop-types';
 
 export default class NewNote extends React.Component {

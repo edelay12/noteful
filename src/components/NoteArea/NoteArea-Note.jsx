@@ -1,16 +1,14 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import mainContext from "./../../Context";
 import propTypes from 'prop-types';
 
 export default class NoteAreaNote extends Component {
-  static contextType = mainContext;
   state = {
     note: []
   };
 
   componentDidMount() {
-    let arr = this.context.state.notes.filter(item => {
+    let arr = this.props.notes.filter(item => {
       return item.id === this.props.selId;
     });
 
@@ -31,7 +29,7 @@ export default class NoteAreaNote extends Component {
               <button
                 className="deleteNoteButton"
                 value={note.id}
-                onClick={() => this.context.del(note.id)}
+                onClick={() => this.props.del(note.id)}
               >
                 X
               </button>
@@ -52,4 +50,5 @@ export default class NoteAreaNote extends Component {
 
 NoteAreaNote.propTypes = {
   selId : propTypes.number,
+  del : propTypes.func
  }

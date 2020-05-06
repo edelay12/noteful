@@ -1,11 +1,9 @@
 import React from "react";
 import { DATABASE_URL } from "../../config";
 import { NavLink } from "react-router-dom";
-import mainContext from "./../../Context";
 import propTypes from "prop-types";
 
 export default class NoteAreaFolder extends React.Component {
-  static contextType = mainContext;
 
   componentDidMount() {
     fetch(`${DATABASE_URL}/notes`)
@@ -16,14 +14,14 @@ export default class NoteAreaFolder extends React.Component {
         throw new Error(Response.statusText);
       })
       .then(ResponsJson => {
-        this.context.updateNotes(ResponsJson);
+        this.props.updateNotes(ResponsJson);
       })
       .catch(err => {
         console.log(err);
       });
   }
   render() {
-    let arr = this.context.state.notes.filter(item => {
+    let arr = this.props.notes.filter(item => {
       return item.foldernum === this.props.selId;
     });
     return (
@@ -44,7 +42,7 @@ export default class NoteAreaFolder extends React.Component {
             </NavLink>
             <button
               className="deleteNoteButton"
-              onClick={() => this.context.del(note.id)}
+              onClick={() => this.props.del(note.id)}
               value={note.id}
             >
               X
